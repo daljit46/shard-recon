@@ -66,7 +66,6 @@ using value_type = float;
 
 
 class FieldUnwarp {
-  MEMALIGN(FieldUnwarp)
   public:
 
     FieldUnwarp (const Image<value_type>& data, const Image<value_type>& field,
@@ -139,8 +138,8 @@ class FieldUnwarp {
 
 void run ()
 {
-  auto data = Image<value_type>::open(argument[0]);
-  auto field = Image<value_type>::open(argument[1]);
+    auto data = Image<value_type>::open(argument[0]);
+    auto field = Image<value_type>::open(argument[1]);
   if (not voxel_grids_match_in_scanner_space(data, field)) {
     WARN("Field map voxel grid does not match the input data. "
          "If the field map was estimated using FSL TOPUP, make sure to use the --fmap output "
@@ -158,7 +157,7 @@ void run ()
   auto opt = get_options("motion");
   Eigen::MatrixXd motion;
   if (opt.size())
-    motion = load_matrix<double>(opt[0][0]);
+    motion = File::Matrix::load_matrix<double>(opt[0][0]);
   else
     motion = Eigen::MatrixXd::Zero(data.size(3), 6);
 
@@ -173,7 +172,7 @@ void run ()
   // Save output
   Header header (data);
   header.datatype() = DataType::from_command_line (DataType::Float32);
-
+  
   auto out = Image<value_type>::create(argument[2], header);
 
   // Loop through shells

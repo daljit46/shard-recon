@@ -122,13 +122,13 @@ typedef float value_type;
 void run ()
 {
   // Load input data
-  auto dwi = Image<value_type>::open(argument[0]).with_direct_io({1, 2, 3, 4});
+    auto dwi = Image<value_type>::open(argument[0]).with_direct_io({1, 2, 3, 4});
 
   // Read motion parameters
   auto opt = get_options("motion");
   Eigen::MatrixXf motion;
   if (opt.size())
-    motion = load_matrix<float>(opt[0][0]);
+    motion = File::Matrix::load_matrix<float>(opt[0][0]);
   else
     motion = Eigen::MatrixXf::Zero(dwi.size(3), 6); 
 
@@ -146,10 +146,10 @@ void run ()
 
   // Read multi-shell basis
   int lmax = 0;
-  vector<Eigen::MatrixXf> rf;
+  std::vector<Eigen::MatrixXf> rf;
   opt = get_options("rf");
   for (size_t k = 0; k < opt.size(); k++) {
-    Eigen::MatrixXf t = load_matrix<float>(opt[k][0]);
+    Eigen::MatrixXf t = File::Matrix::load_matrix<float>(opt[k][0]);
     if (t.rows() != shells.count())
       throw Exception("No. shells does not match no. rows in basis function " + opt[k][0] + ".");
     lmax = std::max(2*(int(t.cols())-1), lmax);
@@ -160,7 +160,7 @@ void run ()
   Eigen::MatrixXf W = Eigen::MatrixXf::Ones(dwi.size(2), dwi.size(3));
   opt = get_options("weights");
   if (opt.size()) {
-    W = load_matrix<float>(opt[0][0]);
+    W = File::Matrix::load_matrix<float>(opt[0][0]);
     if (W.rows() != dwi.size(2) || W.cols() != dwi.size(3))
       throw Exception("Weights matrix dimensions don't match image dimensions.");
   }
@@ -183,7 +183,7 @@ void run ()
   }
 
   // Get volume indices 
-  vector<size_t> idx;
+  std::vector<size_t> idx;
   if (rf.empty()) {
     idx = shells.largest().get_volumes();
   } else {
@@ -193,7 +193,7 @@ void run ()
   }
 
   // Select subset
-  auto dwisub = Adapter::make <Adapter::Extract1D> (dwi, 3, container_cast<vector<uint32_t>> (idx));
+  auto dwisub = Adapter::make <Adapter::Extract1D> (dwi, 3, container_cast<std::vector<uint32_t>> (idx));
 
   Eigen::MatrixXf gradsub (idx.size(), grad.cols());
   for (size_t i = 0; i < idx.size(); i++)
@@ -225,7 +225,7 @@ void run ()
       ssp = DWI::SVR::SSP<float>(std::stof(t));
     } catch (std::invalid_argument& e) {
       try {
-        Eigen::VectorXf v = load_vector<float>(t);
+        Eigen::VectorXf v = MR::File::Matrix::load_vector<float>(t);
         ssp = DWI::SVR::SSP<float>(v);
       } catch (...) {
         throw Exception ("Invalid argument for SSP.");
@@ -301,7 +301,7 @@ void run ()
 
 
 
-  // Read input data to vector (this enforces positive strides!)
+  // Read input data to std::vector (this enforces positive strides!)
   Eigen::VectorXf y (R.rows()); y.setZero();
   size_t j = 0;
   for (auto lv = Loop("loading image data", {0, 1, 2, 3})(dwisub); lv; lv++, j++) {
@@ -327,7 +327,7 @@ void run ()
     check_dimensions(rechdr, init, 0, 3);
     if ((init.size(3) != shells.count()) || (init.size(4) < Math::SH::NforL(lmax)))
       throw Exception("dimensions of init image don't match.");
-    // init vector
+    // init std::vector
     Eigen::VectorXf x0 (R.cols());
     // convert from mssh
     Eigen::VectorXf c (shells.count() * Math::SH::NforL(lmax));
