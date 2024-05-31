@@ -33,7 +33,10 @@ jobs:
     - name: install
       run: sudo cmake --install build
 
-    - name: test
+    - name: test cpp
       run: dwirecon
+
+    - name: test python
+      run: dwimotioncorrect
 
 
