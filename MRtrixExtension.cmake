@@ -48,7 +48,7 @@ endforeach()
 
 foreach(cmd_file ${PYTHON_COMMANDS})
     file(COPY ${cmd_file} DESTINATION ${PROJECT_BINARY_DIR}/bin)
-    install(FILES ${cmd_file}
+    install(FILES ${cmd_file} ${PROJECT_SOURCE_DIR}/mrtrix3/python/bin/mrtrix3.py
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
     )
