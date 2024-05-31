@@ -8,21 +8,15 @@ Daan Christiaens, Lucilio Cordero-Grande, Maximilian Pietsch, Jana Hutter, Antho
 
 ## Setup & build
 
-Prerequisites: MRtrix 3.0, Eigen 3.3.3, and python 3.x with numpy and scipy.
-
-The code is built like any other [MRtrix3](https://github.com/MRtrix3/mrtrix3) 
-module, i.e., by setting up a symbolic link to the core build script:
-
 ```
-$ git clone https://github.com/dchristiaens/shard-recon.git
+$ git clone https://github.com/daljit/shard-recon.git
 $ cd shard-recon
-$ ln -s /path/to/mrtrix3/build
-$ ln -s /path/to/mrtrix3/bin/mrtrix3.py bin/
-$ ./build
+$ git clone https://github.com/mrtrix3/mrtrix3.git -b external_project_changes
+$ cmake -B build -G Ninja
+$ cmake --build build
+$ cmake --install build --prefix=./installation/path #Installation path is arbitrary
+$ export PATH=$PATH:./installation/path/bin
 ```
-
-This will compile the code into `shard-recon/bin`, which then needs to be added 
-to the `PATH`.
 
 
 ## Help & support
