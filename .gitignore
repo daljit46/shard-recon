@@ -18,10 +18,6 @@ build
 *.hdr
 *.qrc
 *.rste
-config
-build.*
-/configure.log
-/build.log
 /core/version.cpp
 /src/project_version.h
 /test/src/project_version.h
@@ -37,7 +33,6 @@ build.*
 .pydevproject
 *.config
 *.creator
-*.txt
 *.log
 *.creator.user
 *.files
