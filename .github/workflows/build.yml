@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+  
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    env:
+      SCCACHE_CACHE_SIZE: 1G
+      SCCACHE_ENABLE: true
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: clone mrtrix3
+      run: git clone https://github.com/mrtrix3/mrtrix3.git -b external_project_changes
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install clang qt6-base-dev libglvnd-dev libeigen3-dev zlib1g-dev libfftw3-dev ninja-build python3-distutils python3-numpy
+
+    - name: Run sccache
+      uses: mozilla-actions/sccache-action@v0.0.4
+
+    - name: configure
+      run: cmake -B build -G Ninja
+
+    - name: build
+      run: cmake --build build
+
+    - name: install
+      run: sudo cmake --install build
+
+    - name: test
+      run: dwirecon
+
+
