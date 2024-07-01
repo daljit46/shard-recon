@@ -39,4 +39,6 @@ jobs:
     - name: test python
       run: dwimotioncorrect
 
+    - name: test python2
+      run: motionfilter
 
