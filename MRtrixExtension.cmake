@@ -46,14 +46,28 @@ foreach(cmd_file ${CPP_COMMANDS})
     )
 endforeach()
 
+add_custom_target(PythonExternalCommands ALL)
 foreach(cmd_file ${PYTHON_COMMANDS})
-    file(COPY ${cmd_file} DESTINATION ${PROJECT_BINARY_DIR}/bin)
-    install(FILES ${cmd_file} ${PROJECT_SOURCE_DIR}/mrtrix3/python/bin/mrtrix3.py
-        DESTINATION bin
-        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
-    )
-    # Check if mrtrix3.py is already in bin
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/bin/mrtrix3.py)
-        file(COPY ${PROJECT_SOURCE_DIR}/mrtrix3/python/bin/mrtrix3.py DESTINATION ${PROJECT_BINARY_DIR}/bin)
+    get_filename_component(CMDNAME ${cmd_file} NAME_WE)
+    # Read the file to check if it contains an "import mrtrix3" statement
+    file(READ ${cmd_file} cmd_content)
+    string(FIND "${cmd_content}" "import mrtrix3" has_import)
+    if(has_import GREATER -1)
+        add_custom_command(
+            TARGET PythonExternalCommands
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${cmd_file} ${PROJECT_BINARY_DIR}/mrtrix3/lib/mrtrix3/commands/${CMDNAME}.py
+        )
+        add_custom_command(
+            TARGET PythonExternalCommands
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+            COMMAND ${CMAKE_COMMAND} 
+                -DCMDNAME=${CMDNAME}
+                -DOUTPUT_DIR="${PROJECT_BINARY_DIR}/bin"
+                -DEXTERNAL_PROJECT_COMMAND=TRUE
+                -P ${PROJECT_SOURCE_DIR}/mrtrix3/cmake/MakePythonExecutable.cmake
+
+        )
+    else()
+        file(COPY ${cmd_file} DESTINATION ${PROJECT_BINARY_DIR}/bin/${CMDNAME})
     endif()
 endforeach()

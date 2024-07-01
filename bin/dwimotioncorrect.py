@@ -332,5 +332,3 @@ def execute(): #pylint: disable=unused-variable
         run.command('cp sliceweights.txt ' + path.from_user(app.ARGS.export_weights, True))
 
 
-mrtrix3.execute()
-
