@@ -1,5 +1,3 @@
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MRTRIX_SUBPROJECT_INSTALL_PREFIX "mrtrix3"
     CACHE STRING "Install prefix for mrtrix3 subproject"
 )
