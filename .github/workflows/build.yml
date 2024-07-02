@@ -19,8 +19,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install clang qt6-base-dev libglvnd-dev libeigen3-dev zlib1g-dev libfftw3-dev ninja-build python3-distutils python3-numpy
-        pip install numpy
+        sudo apt-get install clang qt6-base-dev libglvnd-dev libeigen3-dev zlib1g-dev libfftw3-dev ninja-build python3-distutils python3-numpy python3-scipy
+        pip install numpy scipy
 
     - name: Run sccache
       uses: mozilla-actions/sccache-action@v0.0.4
